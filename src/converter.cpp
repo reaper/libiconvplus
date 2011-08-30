@@ -50,7 +50,8 @@
 
 namespace iconvplus
 {
-	bool converter::convert(const iconv& ic, std::istream& is, std::ostream& os, boost::system::error_code& ec, size_t* non_reversible_conversions) const
+	template <class InputStreamType, class OutputStreamType>
+	bool converter::generic_convert(const iconv& ic, InputStreamType& is, OutputStreamType& os, boost::system::error_code& ec, size_t* non_reversible_conversions) const
 	{
 		size_t counter = 0;
 
@@ -92,11 +93,12 @@ namespace iconvplus
 		return true;
 	}
 	
-	void converter::convert(const iconv& ic, std::istream& is, std::ostream& os, size_t* non_reversible_conversions) const
+	template <class InputStreamType, class OutputStreamType>
+	void converter::generic_convert(const iconv& ic, InputStreamType& is, OutputStreamType& os, size_t* non_reversible_conversions) const
 	{
 		boost::system::error_code ec;
 
-		if (!convert(ic, is, os, ec, non_reversible_conversions))
+		if (!generic_convert(ic, is, os, ec, non_reversible_conversions))
 		{
 			throw boost::system::system_error(ec);
 		}

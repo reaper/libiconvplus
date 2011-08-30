@@ -88,12 +88,75 @@ namespace iconvplus
 			/**
 			 * \brief Proceed to the conversion, using the specified iconv instance.
 			 * \param ic The iconv instance to use.
+			 * \param is The input stream.
+			 * \param os The output stream.
+			 * \param ec The error code, if an error occurs.
+			 * \param non_reversible_conversions If not NULL, *non_reversible_conversions will be updated to indicate the count of non-reversible conversions performed during the call.
+			 * \return true on success. On error, ec is updated to indicate the error.
+			 */
+			bool convert(const iconv& ic, std::wistream& is, std::ostream& os, boost::system::error_code& ec, size_t* non_reversible_conversions = NULL) const;
+
+			/**
+			 * \brief Proceed to the conversion, using the specified iconv instance.
+			 * \param ic The iconv instance to use.
+			 * \param is The input stream.
+			 * \param os The output stream.
+			 * \param ec The error code, if an error occurs.
+			 * \param non_reversible_conversions If not NULL, *non_reversible_conversions will be updated to indicate the count of non-reversible conversions performed during the call.
+			 * \return true on success. On error, ec is updated to indicate the error.
+			 */
+			bool convert(const iconv& ic, std::istream& is, std::wostream& os, boost::system::error_code& ec, size_t* non_reversible_conversions = NULL) const;
+
+			/**
+			 * \brief Proceed to the conversion, using the specified iconv instance.
+			 * \param ic The iconv instance to use.
+			 * \param is The input stream.
+			 * \param os The output stream.
+			 * \param ec The error code, if an error occurs.
+			 * \param non_reversible_conversions If not NULL, *non_reversible_conversions will be updated to indicate the count of non-reversible conversions performed during the call.
+			 * \return true on success. On error, ec is updated to indicate the error.
+			 */
+			bool convert(const iconv& ic, std::wistream& is, std::wostream& os, boost::system::error_code& ec, size_t* non_reversible_conversions = NULL) const;
+
+			/**
+			 * \brief Proceed to the conversion, using the specified iconv instance.
+			 * \param ic The iconv instance to use.
 			 * \param non_reversible_conversions If not NULL, *non_reversible_conversions will be updated to indicate the count of non-reversible conversions performed during the call.
 			 * \return true on success. On error, a boost::system::system_error is thrown.
 			 */
 			void convert(const iconv& ic, std::istream& is, std::ostream& os, size_t* non_reversible_conversions = NULL) const;
 
+			/**
+			 * \brief Proceed to the conversion, using the specified iconv instance.
+			 * \param ic The iconv instance to use.
+			 * \param non_reversible_conversions If not NULL, *non_reversible_conversions will be updated to indicate the count of non-reversible conversions performed during the call.
+			 * \return true on success. On error, a boost::system::system_error is thrown.
+			 */
+			void convert(const iconv& ic, std::wistream& is, std::ostream& os, size_t* non_reversible_conversions = NULL) const;
+
+			/**
+			 * \brief Proceed to the conversion, using the specified iconv instance.
+			 * \param ic The iconv instance to use.
+			 * \param non_reversible_conversions If not NULL, *non_reversible_conversions will be updated to indicate the count of non-reversible conversions performed during the call.
+			 * \return true on success. On error, a boost::system::system_error is thrown.
+			 */
+			void convert(const iconv& ic, std::istream& is, std::wostream& os, size_t* non_reversible_conversions = NULL) const;
+
+			/**
+			 * \brief Proceed to the conversion, using the specified iconv instance.
+			 * \param ic The iconv instance to use.
+			 * \param non_reversible_conversions If not NULL, *non_reversible_conversions will be updated to indicate the count of non-reversible conversions performed during the call.
+			 * \return true on success. On error, a boost::system::system_error is thrown.
+			 */
+			void convert(const iconv& ic, std::wistream& is, std::wostream& os, size_t* non_reversible_conversions = NULL) const;
+
 		private:
+
+			template <class InputStreamType, class OutputStreamType>
+			bool generic_convert(const iconv& ic, InputStreamType& is, OutputStreamType& os, boost::system::error_code& ec, size_t* non_reversible_conversions = NULL) const;
+
+			template <class InputStreamType, class OutputStreamType>
+			void generic_convert(const iconv& ic, InputStreamType& is, OutputStreamType& os, size_t* non_reversible_conversions = NULL) const;
 
 			mutable std::vector<char> m_ibuf;
 			mutable std::vector<char> m_obuf;
@@ -103,6 +166,46 @@ namespace iconvplus
 		m_ibuf(chunk_size),
 		m_obuf(chunk_size)
 	{
+	}
+	
+	inline bool converter::convert(const iconv& ic, std::istream& is, std::ostream& os, boost::system::error_code& ec, size_t* non_reversible_conversions) const
+	{
+		return generic_convert(ic, is, os, ec, non_reversible_conversions);
+	}
+	
+	inline bool converter::convert(const iconv& ic, std::wistream& is, std::ostream& os, boost::system::error_code& ec, size_t* non_reversible_conversions) const
+	{
+		return generic_convert(ic, is, os, ec, non_reversible_conversions);
+	}
+	
+	inline bool converter::convert(const iconv& ic, std::istream& is, std::wostream& os, boost::system::error_code& ec, size_t* non_reversible_conversions) const
+	{
+		return generic_convert(ic, is, os, ec, non_reversible_conversions);
+	}
+	
+	inline bool converter::convert(const iconv& ic, std::wistream& is, std::wostream& os, boost::system::error_code& ec, size_t* non_reversible_conversions) const
+	{
+		return generic_convert(ic, is, os, ec, non_reversible_conversions);
+	}
+	
+	inline void converter::convert(const iconv& ic, std::istream& is, std::ostream& os, size_t* non_reversible_conversions) const
+	{
+		generic_convert(ic, is, os, non_reversible_conversions);
+	}
+	
+	inline void converter::convert(const iconv& ic, std::wistream& is, std::ostream& os, size_t* non_reversible_conversions) const
+	{
+		generic_convert(ic, is, os, non_reversible_conversions);
+	}
+	
+	inline void converter::convert(const iconv& ic, std::istream& is, std::wostream& os, size_t* non_reversible_conversions) const
+	{
+		generic_convert(ic, is, os, non_reversible_conversions);
+	}
+	
+	inline void converter::convert(const iconv& ic, std::wistream& is, std::wostream& os, size_t* non_reversible_conversions) const
+	{
+		generic_convert(ic, is, os, non_reversible_conversions);
 	}
 }
 

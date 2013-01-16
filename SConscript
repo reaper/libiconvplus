@@ -20,7 +20,7 @@ from freelan.build_tools import LibraryProject
 if sys.platform.startswith('win32') or sys.platform.startswith('darwin'):
     libraries.append('iconv')
 
-libraries.append('boost_system' + os.environ['FREELAN_BOOST_SUFFIX'])
+libraries.append('boost_system')
 
 project = LibraryProject(Dir('.'), name, major, minor, libraries, Glob('src/*.cpp'))
 
